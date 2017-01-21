@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		37C115341E2A1AF5009266EF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C115331E2A1AF5009266EF /* main.swift */; };
+		37C1153B1E2A1B67009266EF /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C1153A1E2A1B67009266EF /* Token.swift */; };
+		37C1153D1E2A1D8F009266EF /* Interpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C1153C1E2A1D8F009266EF /* Interpreter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,8 @@
 /* Begin PBXFileReference section */
 		37C115301E2A1AF5009266EF /* RuslanPivakSwift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RuslanPivakSwift; sourceTree = BUILT_PRODUCTS_DIR; };
 		37C115331E2A1AF5009266EF /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		37C1153A1E2A1B67009266EF /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
+		37C1153C1E2A1D8F009266EF /* Interpreter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Interpreter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +62,8 @@
 			isa = PBXGroup;
 			children = (
 				37C115331E2A1AF5009266EF /* main.swift */,
+				37C1153A1E2A1B67009266EF /* Token.swift */,
+				37C1153C1E2A1D8F009266EF /* Interpreter.swift */,
 			);
 			path = RuslanPivakSwift;
 			sourceTree = "<group>";
@@ -120,7 +126,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37C1153D1E2A1D8F009266EF /* Interpreter.swift in Sources */,
 				37C115341E2A1AF5009266EF /* main.swift in Sources */,
+				37C1153B1E2A1B67009266EF /* Token.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +258,7 @@
 				37C115391E2A1AF5009266EF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
