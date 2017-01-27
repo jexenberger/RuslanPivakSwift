@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 repeat {
     guard let line = readLine(strippingNewline: true) else {
         break

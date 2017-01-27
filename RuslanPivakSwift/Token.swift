@@ -9,7 +9,7 @@
 import Foundation
 
 enum TokenType {
-    case BEFORE, INTEGER, PLUS, EOF
+    case BEFORE, INTEGER, PLUS, MINUS, EOF, UNRECOGNISED
 }
 
 class Token: CustomStringConvertible {
