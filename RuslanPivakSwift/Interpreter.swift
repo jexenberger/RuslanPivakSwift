@@ -19,95 +19,94 @@ class Interpreter: Error {
     let text:String
     var pos:Int
     var currentToken:Token
+    var currentChar:String?
     
     init(text:String) {
         self.text = text
         pos = 0
-        currentToken = Token(type: .BEFORE, value: nil)
+        currentToken = Token(.BEFORE, value: nil)
+        self.currentChar = self.text.char(at: pos)
     }
     
-    func getToken(buffer:String) -> Token {
-        switch (buffer) {
-        case let iVal where Int(buffer) != nil:
-            return Token(type: .INTEGER, value: Int(iVal))
-        case let plus where plus == "+":
-            return Token(type: .PLUS, value: plus)
-        case let minus where minus == "-":
-            return Token(type: .MINUS, value: minus)
-        default:
-            return Token(type: .UNRECOGNISED, value: nil)
+    func advance() {
+        pos += 1
+        if pos >= text.characters.count {
+            currentChar = nil
+        } else {
+            currentChar = text.char(at: pos)
         }
     }
     
-    func getNextToken()  -> Token {
-        /*
-         Lexical analyser
-         This method is responsible for breaking a sentence
-         apart into tokens. One token at a time.
-         */
-        let workingText = self.text
-        // is self.pos index past the end of the self.text ?
-        // if so, then return EOF token because there is no more
-        // input left to convert into tokens
-        var extractedToken:Token?
+    func skipWhitespace() {
+        while (currentChar != nil && currentChar!.isWhiteSpace()) {
+            advance()
+        }
+    }
+    
+    func integer() -> Int {
         var buffer = ""
-        var bufferComplete = false
-        repeat {
-            let currentChar =  workingText.char(at: self.pos)
-            if (currentChar == nil) {
-                if (!buffer.isEmpty) {
-                    return getToken(buffer: buffer)
-                } else {
-                    return Token(type: .EOF, value: nil)
-                }
-            }
-            let isWhitespace = currentChar?.isWhiteSpace()
-            if (isWhitespace!) {
-                bufferComplete = !buffer.isEmpty
-            } else {
-                buffer += currentChar!
-            }
-            if (bufferComplete) {
-                extractedToken = getToken(buffer: buffer)
-            }
-            self.pos += 1
-        } while extractedToken == nil
-        return extractedToken!
+        while (currentChar != nil && Int(currentChar!) != nil) {
+            buffer += currentChar!
+            advance()
+        }
+        return Int(buffer)!
     }
     
-    func eat(tokenType:TokenType)-> Token? {
-        var result:Token?
-        if (currentToken.type == tokenType) {
-            result = currentToken
+    func getNextToken() -> Token {
+        while currentChar != nil {
+            if (currentChar!.isWhiteSpace()) {
+                skipWhitespace()
+            }
+            if (Int(currentChar!) != nil) {
+                return Token(.INTEGER, value: integer())
+            }
+            if (currentChar! == "+") {
+                self.advance()
+                return Token(.PLUS, value:nil)
+            }
+            if (currentChar! == "-") {
+                self.advance()
+                return Token(.MINUS, value:nil)
+            }
         }
-        return result
+        return Token(.EOF, value:nil)
+    }
+    
+    func eat(type:TokenType) -> Bool {
+        if (currentToken.type == type)  {
+            self.currentToken = getNextToken()
+            return true
+        }
+        return false
     }
     
     func expr() -> Either<Any,String> {
-        currentToken = getNextToken()
-        let left = currentToken
-        if eat(tokenType: TokenType.INTEGER) == nil {
-            let msg = "Urecognised token \(left.type)"
-            return .Error(msg)
+        self.currentToken = getNextToken()
+        guard self.currentToken.type != .EOF else {
+            return .Error("Unexpected EOF")
         }
-        currentToken = getNextToken()
-        let op  = currentToken
-        if eat(tokenType: TokenType.PLUS) == nil && eat(tokenType: TokenType.MINUS) == nil {
-            let msg = "Urecognised token \(op.type)"
-            return .Error(msg)
+        let left = self.currentToken
+        guard eat(type: .INTEGER) else {
+            return .Error("Unexpected symbol \(left.type)")
         }
-        currentToken = getNextToken()
-        let right = currentToken
-        if eat(tokenType: TokenType.INTEGER) == nil {
-            let msg = "Urecognised token \(right.type)"
-            return .Error(msg)
-        }
-        var result:Any = ""
-        if (op.type == TokenType.PLUS) {
-            result =  (left.value! as! Int) + (right.value! as! Int)
+        let op = self.currentToken
+        if op.type == .PLUS {
+            guard eat(type: .PLUS) else {
+                return .Error("Unexpected symbol \(left.type)")
+            }
         } else {
-            result =  (left.value! as! Int) - (right.value! as! Int)
+            guard eat(type: .MINUS) else {
+                return .Error("Unexpected symbol \(left.type)")
+            }
         }
-        return .Success(result)
+        let right = self.currentToken
+        guard eat(type: .INTEGER) else {
+            return .Error("Unexpected symbol \(right.type)")
+        }
+        if op.type == .PLUS {
+            return .Success((left.value as! Int) + (right.value as! Int))
+        } else {
+            return .Success((left.value as! Int) - (right.value as! Int))
+        }
     }
 }

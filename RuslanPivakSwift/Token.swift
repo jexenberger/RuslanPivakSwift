@@ -19,7 +19,7 @@ class Token: CustomStringConvertible {
     
     public var description: String { return "Token:{\(type), \(value)}" }
     
-    init(type:TokenType, value:Any?) {
+    init(_ type:TokenType, value:Any?) {
         self.type = type
         self.value = value
     }

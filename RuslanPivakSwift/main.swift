@@ -8,6 +8,7 @@
 import Foundation
 
 repeat {
+    print("calc> ", terminator: "")
     guard let line = readLine(strippingNewline: true) else {
         break
     }
