@@ -43,6 +43,12 @@ class Interpreter: Error {
         }
     }
     
+    func term() -> Any?{
+        let token = currentToken
+        let _ = eat(type: .INTEGER)
+        return token.value
+    }
+    
     func integer() -> Int {
         var buffer = ""
         while (currentChar != nil && Int(currentChar!) != nil) {
@@ -68,6 +74,15 @@ class Interpreter: Error {
                 self.advance()
                 return Token(.MINUS, value:nil)
             }
+            if (currentChar! == "*") {
+                self.advance()
+                return Token(.PLUS, value:nil)
+            }
+            if (currentChar! == "/") {
+                self.advance()
+                return Token(.MINUS, value:nil)
+            }
+            
         }
         return Token(.EOF, value:nil)
     }
@@ -81,32 +96,24 @@ class Interpreter: Error {
     }
     
     func expr() -> Either<Any,String> {
-        self.currentToken = getNextToken()
-        guard self.currentToken.type != .EOF else {
-            return .Error("Unexpected EOF")
-        }
-        let left = self.currentToken
-        guard eat(type: .INTEGER) else {
-            return .Error("Unexpected symbol \(left.type)")
-        }
-        let op = self.currentToken
-        if op.type == .PLUS {
-            guard eat(type: .PLUS) else {
-                return .Error("Unexpected symbol \(left.type)")
+        currentToken = getNextToken()
+        var result = term()
+        while (Token.arithmeticTokens().contains(currentToken.type)) {
+            switch currentToken.type {
+            case .PLUS:
+                guard eat(type: .PLUS) else {
+                    return .Error("Unexpected token \(currentToken.type)")
+                }
+                result = result as! Int + (term() as! Int)
+            case .MINUS:
+                guard eat(type: .MINUS) else {
+                    return .Error("Unexpected token \(currentToken.type)")
+                }
+                result = result as! Int + (term() as! Int)
+            default:
+                return .Error("Unexpected token \(currentToken.type)")
             }
-        } else {
-            guard eat(type: .MINUS) else {
-                return .Error("Unexpected symbol \(left.type)")
-            }
         }
-        let right = self.currentToken
-        guard eat(type: .INTEGER) else {
-            return .Error("Unexpected symbol \(right.type)")
-        }
-        if op.type == .PLUS {
-            return .Success((left.value as! Int) + (right.value as! Int))
-        } else {
-            return .Success((left.value as! Int) - (right.value as! Int))
-        }
+        return .Success(result!)
     }
 }

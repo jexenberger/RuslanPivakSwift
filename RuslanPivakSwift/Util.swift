@@ -24,3 +24,7 @@ extension String {
         return self == " " || self == "\t"
     }
 }
+
+extension Array {
+    
+}

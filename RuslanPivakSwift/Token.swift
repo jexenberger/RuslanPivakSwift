@@ -9,7 +9,7 @@
 import Foundation
 
 enum TokenType {
-    case BEFORE, INTEGER, PLUS, MINUS, EOF, UNRECOGNISED
+    case BEFORE, INTEGER, PLUS, MINUS, MULTIPLY, DIVIDE, EOF, UNRECOGNISED
 }
 
 class Token: CustomStringConvertible {
@@ -22,6 +22,10 @@ class Token: CustomStringConvertible {
     init(_ type:TokenType, value:Any?) {
         self.type = type
         self.value = value
+    }
+    
+    static func arithmeticTokens() -> [TokenType] {
+        return [.PLUS, .MINUS, .MULTIPLY, .DIVIDE]
     }
     
     
